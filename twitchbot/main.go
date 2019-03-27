@@ -6,18 +6,34 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+	"text/template"
 
+	"github.com/deanveloper/notezart"
 	twitch "github.com/gempir/go-twitch-irc"
 )
 
 var client *twitch.Client
-
-var config struct {
-	Username string `json:"username"`
-	OAuth    string `json:"oauth"`
-}
+var config notezart.Config
 
 func main() {
+
+	initConfig()
+	initMessages()
+
+	client = twitch.NewClient(config.Twitch.Username, config.Twitch.Password)
+	client.OnNewMessage(onMessage)
+	client.OnConnect(onConnect)
+	client.Join(config.Twitch.Username)
+	err := client.Connect()
+	if err != nil {
+		fmt.Println("Error in connection:", err)
+		os.Exit(1)
+	}
+}
+
+// initializes global config variable or calls
+// os.Exit(1) if an error occurs
+func initConfig() {
 	configFile, err := ioutil.ReadFile("config.json")
 	if err != nil {
 		fmt.Println("Error while reading config.json:", err)
@@ -28,19 +44,21 @@ func main() {
 		fmt.Println("Error while parsing config.json:", err)
 		os.Exit(1)
 	}
-	client = twitch.NewClient(config.Username, config.OAuth)
-	client.OnNewMessage(onMessage)
-	client.OnConnect(onConnect)
-	client.Join(config.Username)
-	err = client.Connect()
+}
+
+// initializes global messages variable or calls
+// os.Exit(1) if an error occurs
+func initMessages() {
+	tmpl, err := template.ParseFiles("defaultMessages.tmpl")
 	if err != nil {
-		fmt.Println("Error in connection:", err)
+		fmt.Println("Error while parsing defaultMessages.tmpl:", err)
 		os.Exit(1)
 	}
+	messages = tmpl
 }
 
 func onConnect() {
-	client.Say(config.Username, "Connected!")
+	client.Say(config.Twitch.Username, "Connected!")
 }
 
 func onMessage(channel string, user twitch.User, msg twitch.Message) {
