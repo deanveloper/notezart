@@ -6,9 +6,9 @@
 A better music bot for better streamers.
 
 Will have the following features:
- - Disallow songs from certain artists
- - Disallow songs containing certain keywords (ie "minecraft parody")
- - Web interface
+ - Disallow certain songs, artists, or keywords
+ - Web interface for viewing the song list
+ - Web interface for listening to the queue
 
 Since I need to pay for hosting, I'll have a premium plan
 which will allow streamers to have configurable responses.
