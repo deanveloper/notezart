@@ -53,6 +53,6 @@ func onMessage(channel string, user twitch.User, msg twitch.Message) {
 	// basically just an echo command for now
 	switch cmd {
 	case "!sr":
-		client.Say(channel, "Thank you, "+user.DisplayName+", for requesting "+args)
+		client.Say(channel, user.DisplayName+" has requested "+args)
 	}
 }
