@@ -16,3 +16,11 @@ Since I need to pay for hosting, I'll have a premium plan
 which will allow streamers to have configurable responses.
 
 Will probably only allow songs from YouTube. I'm not 100% sure on that yet, though.
+
+### Directory Structure
+
+```
+notezart/: backend and base API
+    twitchbot/: twitch chat frontend
+    web/: [coming soon] web frontend
+```
