@@ -30,6 +30,7 @@ func main() {
 	}
 	client = twitch.NewClient(config.Username, config.OAuth)
 	client.OnNewMessage(onMessage)
+	client.OnConnect(onConnect)
 	client.Join(config.Username)
 	err = client.Connect()
 	if err != nil {
