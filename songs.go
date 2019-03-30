@@ -1,22 +1,25 @@
 package notezart
 
 import (
-	"errors"
 	"fmt"
+	"html"
 	"net/http"
 
 	"google.golang.org/api/googleapi/transport"
 	"google.golang.org/api/youtube/v3"
 )
 
-// ErrNoVideoFound represents when a video which was searched for cannot be found
-var ErrNoVideoFound = errors.New("no video found")
+var songLists = make(map[string]*VideoList)
 
-// Video is a struct which represents a Youtube Video
-type Video struct {
-	ID     string
-	Title  string
-	Artist string
+// SongQueue returns the given channel's video list.
+// If the channel does not yet have a video list, it is created.
+func SongQueue(channel string) *VideoList {
+	list, ok := songLists[channel]
+	if !ok {
+		list = new(VideoList)
+		songLists[channel] = list
+	}
+	return list
 }
 
 // SearchForSong searches for a song on YouTube. `query` should be a
@@ -41,5 +44,9 @@ func SearchForSong(config Config, query string) (Video, error) {
 	}
 
 	result := response.Items[0]
-	return Video{ID: result.Id.VideoId}, nil
+	return Video{
+		ID:     result.Id.VideoId,
+		Title:  html.UnescapeString(result.Snippet.Title),
+		Artist: html.UnescapeString(result.Snippet.ChannelTitle),
+	}, nil
 }

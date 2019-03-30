@@ -1,0 +1,34 @@
+
+{{/*
+
+https://godoc.org/text/template
+
+Input format:
+.User -> twitch.User
+.Video -> notezart.Video
+.Songs -> notezart.VideoList
+
+Functions available:
+(none for now)
+
+*/}}
+
+{{define "SongNotFound" -}}
+{{.User.DisplayName}}, no results found.
+{{- end}}
+
+{{define "ErrorOccurred" -}}
+{{.User.DisplayName}}, an error occured, the developer has been notified!
+{{- end}}
+
+{{define "SongQueued" -}}
+{{.User.DisplayName}} has queued {{.Video.Title}} in spot {{.Songs.Len}}.
+{{- end}}
+
+{{define "SongList" -}}
+    {{.User.DisplayName}} Upcoming songs: {{"" -}}
+    {{range $i, $e := (.Songs.Slice 0 3) -}}
+        {{if $i}} | {{end -}}
+        "{{.Title}}" (requested by {{.Requester}})
+    {{- end}}
+{{- end}}

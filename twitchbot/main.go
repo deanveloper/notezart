@@ -1,4 +1,4 @@
-package main
+package twitchbot
 
 import (
 	"encoding/json"
@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
-	"text/template"
 
 	"github.com/deanveloper/notezart"
 	twitch "github.com/gempir/go-twitch-irc"
@@ -15,7 +14,8 @@ import (
 var client *twitch.Client
 var config notezart.Config
 
-func main() {
+// Initialize initializes the twitch bot
+func Initialize() {
 
 	initConfig()
 	initMessages()
@@ -23,10 +23,9 @@ func main() {
 	client = twitch.NewClient(config.Twitch.Username, config.Twitch.Password)
 	client.OnNewMessage(onMessage)
 	client.OnConnect(onConnect)
-	client.Join(config.Twitch.Username)
 	err := client.Connect()
 	if err != nil {
-		fmt.Println("Error in connection:", err)
+		fmt.Println("Error in twitch connection:", err)
 		os.Exit(1)
 	}
 }
@@ -46,18 +45,8 @@ func initConfig() {
 	}
 }
 
-// initializes global messages variable or calls
-// os.Exit(1) if an error occurs
-func initMessages() {
-	tmpl, err := template.ParseFiles("defaultMessages.tmpl")
-	if err != nil {
-		fmt.Println("Error while parsing defaultMessages.tmpl:", err)
-		os.Exit(1)
-	}
-	messages = tmpl
-}
-
 func onConnect() {
+	client.Join(config.Twitch.Username)
 	client.Say(config.Twitch.Username, "Connected!")
 }
 
@@ -66,11 +55,16 @@ func onMessage(channel string, user twitch.User, msg twitch.Message) {
 		return
 	}
 	split := strings.SplitN(msg.Text, " ", 2)
+	if len(split) == 1 {
+		split = append(split, "")
+	}
 	cmd, args := split[0], split[1]
 
 	// basically just an echo command for now
 	switch cmd {
 	case "!sr":
-		client.Say(channel, user.DisplayName+" has requested "+args)
+		requestCmd(user, channel, args)
+	case "!songlist":
+		listCmd(user, channel)
 	}
 }
