@@ -23,7 +23,7 @@ Will probably only allow songs from YouTube. I'm not 100% sure on that yet, thou
 ```
 notezart/: main package, connects everything together
 	api/: 		backend and base API
-	messages/:  handles templating for messages and webpages
+	messages/:  handles templating for messages
 	twitchbot/: twitch chat frontend
 	web/:       [coming soon] web server
 ```

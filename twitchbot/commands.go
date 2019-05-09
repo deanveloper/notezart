@@ -12,7 +12,10 @@ func requestCmd(user twitch.User, channel string, song string) error {
 	vid, err := api.SearchForSong(config, song)
 	vid.Requester = user.DisplayName
 	if err == api.ErrNoVideoFound {
-		client.Say(channel, messages.Message("SongNotFound", messages.MessageInput{User: user}))
+		client.Say(channel, messages.Message("SongNotFound", messages.MessageInput{
+			User:  user,
+			Video: api.Video{Title: song},
+		}))
 		return nil
 	} else if err != nil {
 		client.Say(channel, messages.Message("ErrorOccurred", messages.MessageInput{User: user}))

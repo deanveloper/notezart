@@ -5,8 +5,8 @@ https://godoc.org/text/template
 
 Input format:
 .User -> twitch.User
-.Video -> notezart.Video
-.Songs -> notezart.VideoList
+.Video -> api.Video
+.Songs -> api.VideoList
 
 Functions available:
 (none for now)
@@ -14,11 +14,11 @@ Functions available:
 */}}
 
 {{define "SongNotFound" -}}
-{{.User.DisplayName}}, no results found.
+{{.User.DisplayName}}, no results found for {{.Video.Title}}.
 {{- end}}
 
 {{define "ErrorOccurred" -}}
-{{.User.DisplayName}}, an error occured, the developer has been notified!
+{{.User.DisplayName}}, an error occured!
 {{- end}}
 
 {{define "SongQueued" -}}
@@ -29,6 +29,6 @@ Functions available:
     {{.User.DisplayName}} Upcoming songs: {{"" -}}
     {{range $i, $e := (.Songs.Slice 0 3) -}}
         {{if $i}} | {{end -}}
-        "{{.Title}}" (requested by {{.Requester}})
+        {{printf "%q (%s)" .Title .Requester}}
     {{- end}}
 {{- end}}
