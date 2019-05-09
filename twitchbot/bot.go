@@ -1,9 +1,7 @@
 package twitchbot
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -14,23 +12,9 @@ import (
 var client *twitch.Client
 var config api.Config
 
-// initializes global config variable or calls
-// os.Exit(1) if an error occurs
-func init() {
-	configFile, err := ioutil.ReadFile("config.json")
-	if err != nil {
-		fmt.Println("Error while reading config.json:", err)
-		os.Exit(1)
-	}
-	err = json.Unmarshal(configFile, &config)
-	if err != nil {
-		fmt.Println("Error while parsing config.json:", err)
-		os.Exit(1)
-	}
-}
-
 // Start initializes the twitch client and registers needed events.
-func Start() {
+func Start(cfg api.Config) {
+	config = cfg
 	client = twitch.NewClient(config.Twitch.Username, config.Twitch.Password)
 	client.OnNewMessage(onMessage)
 	client.OnConnect(onConnect)
@@ -47,6 +31,7 @@ func Join(user string) {
 }
 
 func onConnect() {
+	// always connect to own channel
 	Join(config.Twitch.Username)
 }
 

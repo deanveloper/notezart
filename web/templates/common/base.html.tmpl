@@ -1,0 +1,18 @@
+{{define "base"}}
+<html>
+
+<head>
+    <title>{{.Page.Title}}</title>
+    {{template "header-style"}}
+</head>
+
+<body>
+    {{template "header" .}}
+
+    {{template "content" .}}
+
+    {{template "footer" .}}
+</body>
+
+</html>
+{{end}}

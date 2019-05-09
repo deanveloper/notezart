@@ -22,6 +22,11 @@ type Config struct {
 	Youtube struct {
 		Key string
 	}
+	Web struct {
+		Addr     string
+		CertFile string
+		KeyFile  string
+	}
 }
 
 // Video is a struct which represents a Youtube Video
