@@ -7,32 +7,16 @@ import (
 	"os"
 	"strings"
 
-	"github.com/deanveloper/notezart"
+	"github.com/deanveloper/notezart/api"
 	twitch "github.com/gempir/go-twitch-irc"
 )
 
 var client *twitch.Client
-var config notezart.Config
-
-// Initialize initializes the twitch bot
-func Initialize() {
-
-	initConfig()
-	initMessages()
-
-	client = twitch.NewClient(config.Twitch.Username, config.Twitch.Password)
-	client.OnNewMessage(onMessage)
-	client.OnConnect(onConnect)
-	err := client.Connect()
-	if err != nil {
-		fmt.Println("Error in twitch connection:", err)
-		os.Exit(1)
-	}
-}
+var config api.Config
 
 // initializes global config variable or calls
 // os.Exit(1) if an error occurs
-func initConfig() {
+func init() {
 	configFile, err := ioutil.ReadFile("config.json")
 	if err != nil {
 		fmt.Println("Error while reading config.json:", err)
@@ -45,9 +29,25 @@ func initConfig() {
 	}
 }
 
+// Start initializes the twitch client and registers needed events.
+func Start() {
+	client = twitch.NewClient(config.Twitch.Username, config.Twitch.Password)
+	client.OnNewMessage(onMessage)
+	client.OnConnect(onConnect)
+	err := client.Connect()
+	if err != nil {
+		fmt.Println("Error in twitch connection:", err)
+		os.Exit(1)
+	}
+}
+
+// Join joins a channel
+func Join(user string) {
+	client.Join(user)
+}
+
 func onConnect() {
-	client.Join(config.Twitch.Username)
-	client.Say(config.Twitch.Username, "Connected!")
+	Join(config.Twitch.Username)
 }
 
 func onMessage(channel string, user twitch.User, msg twitch.Message) {

@@ -1,4 +1,4 @@
-package twitchbot
+package messages
 
 import (
 	"bytes"
@@ -7,8 +7,7 @@ import (
 	"runtime/debug"
 	"text/template"
 
-	"github.com/deanveloper/notezart"
-
+	"github.com/deanveloper/notezart/api"
 	twitch "github.com/gempir/go-twitch-irc"
 )
 
@@ -16,15 +15,13 @@ import (
 // into the messages
 type MessageInput struct {
 	User  twitch.User
-	Video notezart.Video
-	Songs *notezart.VideoList
+	Video api.Video
+	Songs *api.VideoList
 }
 
 var messages *template.Template
 
-// initializes global messages variable or calls
-// os.Exit(1) if an error occurs
-func initMessages() {
+func init() {
 	tmpl, err := template.New("").ParseFiles("defaultMessages.tmpl")
 	if err != nil {
 		fmt.Println("Error while parsing defaultMessages.tmpl:", err)
@@ -35,7 +32,7 @@ func initMessages() {
 
 // Message returns a message from the defaultMessages.txt with
 // the given template inputs.
-func message(key string, inputs MessageInput) string {
+func Message(key string, inputs MessageInput) string {
 	var buf bytes.Buffer
 	err := messages.ExecuteTemplate(&buf, key, inputs)
 	if err != nil {

@@ -3,37 +3,38 @@ package twitchbot
 import (
 	"fmt"
 
-	"github.com/deanveloper/notezart"
+	"github.com/deanveloper/notezart/api"
+	"github.com/deanveloper/notezart/messages"
 	twitch "github.com/gempir/go-twitch-irc"
 )
 
 func requestCmd(user twitch.User, channel string, song string) error {
-	vid, err := notezart.SearchForSong(config, song)
+	vid, err := api.SearchForSong(config, song)
 	vid.Requester = user.DisplayName
-	if err == notezart.ErrNoVideoFound {
-		client.Say(channel, message("SongNotFound", MessageInput{User: user}))
+	if err == api.ErrNoVideoFound {
+		client.Say(channel, messages.Message("SongNotFound", messages.MessageInput{User: user}))
 		return nil
 	} else if err != nil {
-		client.Say(channel, message("ErrorOccurred", MessageInput{User: user}))
+		client.Say(channel, messages.Message("ErrorOccurred", messages.MessageInput{User: user}))
 		return err
 	}
 
-	queue := notezart.SongQueue(channel)
+	queue := api.SongQueue(channel)
 	queue.Enqueue(vid)
 
-	client.Say(channel, message("SongQueued", MessageInput{
+	client.Say(channel, messages.Message("SongQueued", messages.MessageInput{
 		User:  user,
 		Video: vid,
-		Songs: notezart.SongQueue(channel),
+		Songs: api.SongQueue(channel),
 	}))
 
 	return nil
 }
 
 func listCmd(user twitch.User, channel string) error {
-	queue := notezart.SongQueue(channel)
+	queue := api.SongQueue(channel)
 	fmt.Println(queue)
-	client.Say(channel, message("SongList", MessageInput{
+	client.Say(channel, messages.Message("SongList", messages.MessageInput{
 		User:  user,
 		Songs: queue,
 	}))

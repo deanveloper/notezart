@@ -1,4 +1,4 @@
-package notezart
+package api
 
 import (
 	"errors"
